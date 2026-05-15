@@ -14,7 +14,8 @@ export const TransactionProvider = ({ children }) => {
 
   const fetchTransactions = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/transactions');
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await axios.get(`${API_BASE_URL}/api/transactions`);
       setTransactions(res.data);
     } catch (err) {
       console.error(err);
@@ -23,7 +24,8 @@ export const TransactionProvider = ({ children }) => {
 
   const addTransaction = async (txData) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/transactions', txData);
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await axios.post(`${API_BASE_URL}/api/transactions`, txData);
       setTransactions([res.data, ...transactions]);
     } catch (err) {
       console.error(err);
@@ -32,7 +34,8 @@ export const TransactionProvider = ({ children }) => {
 
   const deleteTransaction = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/transactions/${id}`);
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      await axios.delete(`${API_BASE_URL}/api/transactions/${id}`);
       setTransactions(transactions.filter(t => t._id !== id));
     } catch (err) {
       console.error(err);
