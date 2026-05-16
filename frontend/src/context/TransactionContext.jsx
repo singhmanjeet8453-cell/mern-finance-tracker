@@ -14,7 +14,7 @@ export const TransactionProvider = ({ children }) => {
 
   const fetchTransactions = async () => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
       const res = await axios.get(`${API_BASE_URL}/api/transactions`);
       setTransactions(res.data);
     } catch (err) {
@@ -24,7 +24,7 @@ export const TransactionProvider = ({ children }) => {
 
   const addTransaction = async (txData) => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
       const res = await axios.post(`${API_BASE_URL}/api/transactions`, txData);
       setTransactions([res.data, ...transactions]);
     } catch (err) {
@@ -34,7 +34,7 @@ export const TransactionProvider = ({ children }) => {
 
   const deleteTransaction = async (id) => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
       await axios.delete(`${API_BASE_URL}/api/transactions/${id}`);
       setTransactions(transactions.filter(t => t._id !== id));
     } catch (err) {

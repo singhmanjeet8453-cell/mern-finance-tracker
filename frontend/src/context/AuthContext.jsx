@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchProfile = async () => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
       const res = await axios.get(`${API_BASE_URL}/api/auth/profile`);
       setUser(res.data);
     } catch (err) {
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
     const res = await axios.post(`${API_BASE_URL}/api/auth/login`, { email, password });
     localStorage.setItem('token', res.data.token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (name, email, password, monthlyBudget) => {
-    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
     const res = await axios.post(`${API_BASE_URL}/api/auth/register`, { name, email, password, monthlyBudget });
     localStorage.setItem('token', res.data.token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateUser = async (userData) => {
-    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const API_BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
     const res = await axios.put(`${API_BASE_URL}/api/auth/profile`, userData);
     localStorage.setItem('token', res.data.token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
