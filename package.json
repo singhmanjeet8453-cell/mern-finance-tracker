@@ -1,0 +1,18 @@
+{
+  "name": "finance-dashboard",
+  "version": "1.0.0",
+  "description": "A full-stack Finance Dashboard and AI Expense Tracker web application built for placement interviews.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start": "npm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
