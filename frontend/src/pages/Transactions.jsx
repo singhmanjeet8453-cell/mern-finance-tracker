@@ -1,14 +1,26 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { TransactionContext } from '../context/TransactionContext';
 import { Plus, Trash2, Download, Search, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import QuickAddModal from '../components/QuickAddModal';
+import { useLocation } from 'react-router-dom';
 
 const Transactions = () => {
   const { transactions, deleteTransaction } = useContext(TransactionContext);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialSearch = searchParams.get('search') || '';
+
   const [showModal, setShowModal] = useState(false);
   const [filterType, setFilterType] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search).get('search');
+    if (query !== null) {
+      setSearchTerm(query);
+    }
+  }, [location.search]);
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(tx => {
@@ -17,6 +29,35 @@ const Transactions = () => {
       return matchType && matchSearch;
     }).sort((a, b) => new Date(b.date) - new Date(a.date));
   }, [transactions, filterType, searchTerm]);
+
+  const handleExportCSV = () => {
+    if (filteredTransactions.length === 0) return;
+    
+    const headers = ['Date', 'Type', 'Category', 'Amount', 'Note'];
+    const csvData = filteredTransactions.map(tx => [
+      new Date(tx.date).toLocaleDateString(),
+      tx.type,
+      tx.category,
+      tx.amount,
+      tx.note || ''
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'transactions.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -36,7 +77,7 @@ const Transactions = () => {
           <p className="text-textMuted mt-1">Manage your income and expenses</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none glass hover:bg-white/10 px-4 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors">
+          <button onClick={handleExportCSV} className="flex-1 sm:flex-none glass hover:bg-white/10 px-4 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors">
             <Download size={18} /> <span className="hidden sm:inline">Export CSV</span>
           </button>
           <button onClick={() => setShowModal(true)} className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
