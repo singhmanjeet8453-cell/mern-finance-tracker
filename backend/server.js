@@ -64,19 +64,26 @@ const connectDB = async () => {
         console.log('Connecting to provided MONGO_URI...');
         await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
         console.log('Connected to MongoDB successfully.');
+        await seedDemoData();
         return;
       } catch (err) {
         console.warn('Could not connect to MONGO_URI:', err.message);
       }
-    } else {
-      try {
-        console.log('Checking local MongoDB at mongodb://127.0.0.1:27017/finance_dashboard...');
-        await mongoose.connect('mongodb://127.0.0.1:27017/finance_dashboard', { serverSelectionTimeoutMS: 2000 });
-        console.log('Connected to local MongoDB.');
-        return;
-      } catch (err) {
-        console.log('Local MongoDB not found. Starting in-memory database fallback...');
-      }
+    }
+
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      console.warn('MONGO_URI is not set. Please add MONGO_URI to your Vercel Project Environment Variables.');
+      return;
+    }
+
+    try {
+      console.log('Checking local MongoDB at mongodb://127.0.0.1:27017/finance_dashboard...');
+      await mongoose.connect('mongodb://127.0.0.1:27017/finance_dashboard', { serverSelectionTimeoutMS: 2000 });
+      console.log('Connected to local MongoDB.');
+      await seedDemoData();
+      return;
+    } catch (err) {
+      console.log('Local MongoDB not found. Starting in-memory database fallback...');
     }
 
     try {
