@@ -33,7 +33,8 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.get(`${API_BASE_URL}/api/auth/profile`);
       setUser(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('Failed to fetch profile with stored token:', err);
+      logout();
     } finally {
       setLoading(false);
     }
